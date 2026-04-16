@@ -1,0 +1,93 @@
+        AREA MY_CODE, CODE, READONLY
+        ENTRY
+        EXPORT __main
+
+__main
+
+; =========================================================
+; 🔹 SORU 1
+; 0x10102265 değerini 0x20000030 → 0x2000003F arası yaz
+; =========================================================
+
+        LDR R0, =0x20000030      ; start address
+        LDR R1, =0x10102265      ; value
+        LDR R2, =0x2000003F      ; end address
+
+S1_LOOP
+        STR R1, [R0]             ; store value
+        ADD R0, R0, #4           ; next address (word aligned)
+        CMP R0, R2
+        BLE S1_LOOP
+
+; =========================================================
+; 🔹 SORU 2
+; 0x23456789 değerini memory'e yaz ve topla → R9
+; =========================================================
+
+TEMP0  EQU 0x20000060
+TEMP1  EQU 0x20000064
+TEMP2  EQU 0x20000068
+TEMP3  EQU 0x2000006C
+
+        LDR R1, =0x23456789
+
+        ; write to memory
+        LDR R0, =TEMP0
+        STR R1, [R0]
+
+        LDR R0, =TEMP1
+        STR R1, [R0]
+
+        LDR R0, =TEMP2
+        STR R1, [R0]
+
+        LDR R0, =TEMP3
+        STR R1, [R0]
+
+        ; read and add (örnek: TEMP0 + TEMP3)
+        LDR R0, =TEMP0
+        LDR R2, [R0]
+
+        LDR R0, =TEMP3
+        LDR R3, [R0]
+
+        ADD R9, R2, R3           ; result → R9
+
+; =========================================================
+; 🔹 SORU 3
+; Student ID: 1316180150 → digit toplamı → memory
+; =========================================================
+
+        LDR R0, =0x20000100      ; result address
+
+        ; digits
+        MOV R2, #1
+        MOV R3, #3
+        MOV R4, #1
+        MOV R5, #6
+        MOV R6, #1
+        MOV R7, #8
+        MOV R8, #0
+        MOV R9, #1
+        MOV R10, #5
+        MOV R11, #0
+
+        ; sum
+        MOV R12, #0
+        ADD R12, R12, R2
+        ADD R12, R12, R3
+        ADD R12, R12, R4
+        ADD R12, R12, R5
+        ADD R12, R12, R6
+        ADD R12, R12, R7
+        ADD R12, R12, R8
+        ADD R12, R12, R9
+        ADD R12, R12, R10
+        ADD R12, R12, R11
+
+        STR R12, [R0]            ; store result at 0x20000100
+
+; =========================================================
+
+HERE    B HERE
+        END
